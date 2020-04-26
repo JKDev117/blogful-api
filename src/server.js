@@ -14,8 +14,10 @@ const db = knex({
 
 //app.set('property-name', 'property-value')
 //set a property called 'db' and set the knex instance as the value
-app.set('db', db) //attach the knex instance to the app as a property
-//^^ any request handling middleware can now read the 'db' property on the app to get the knex instance
+//attach the knex instance to the app as a property
+//any request handling middleware can now read the 'db' property on the app to get the knex instance
+app.set('db', db) 
+
 
 //tells app to start listening on a port number
 app.listen(PORT, () => {
