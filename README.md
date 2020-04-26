@@ -9,8 +9,9 @@ To migrate your test database, use the following command:
     `npm run migrate:test`
 
 17.16 Code Links:  
-<https://github.com/Thinkful-Ed/blogful-api/tree/post-article>
-<>
-<>
-<>
+<https://github.com/Thinkful-Ed/blogful-api/tree/post-article>  
+<https://github.com/Thinkful-Ed/blogful-api/tree/post-article-validation>  
+<>  
+<>  
+
 

@@ -6,7 +6,7 @@ const app = require('../src/app')
 const { makeArticlesArray } = require('./articles.fixtures')
 
 
-//you can add .only (describe.only) so we're only running this test file whilst working on it
+//Optional: you can add .only (describe.only) so we're only running this test file whilst working on it
 describe('Articles Endpoints', function() {
     let db
     
@@ -80,7 +80,8 @@ describe('Articles Endpoints', function() {
         })//end context 'Given there are articles in the database'
     })//end describe `GET /articles/:article:id`
 
-    describe(`POST /articles`, () => {
+    //Optional: you can add .only (describe.only) so we're only running this test file whilst working on it
+    describe.only(`POST /articles`, () => {
         it('creates an article, responding with 201 and the new article', function(){
             this.retries(3) //specifies how many times to attempt the test before counting it as failure
             const newArticle = {
@@ -109,7 +110,33 @@ describe('Articles Endpoints', function() {
                         .expect(postRes.body)
                 )
         })
+
+        const requiredFields = ['title', 'content', 'style']
+
+        requiredFields.forEach(field => {
+            const newArticle = {
+                title: 'Test new article',
+                style: 'Listicle',
+                content: 'Test new article content...'
+            }
+
+            it(`responds with 400 and an error message when the ${field} is missing`, () => {
+                delete newArticle[field]
+
+                return supertest(app)
+                    .post('/articles')
+                    .send(newArticle)
+                    .expect(400, {
+                        error: { message: `Missing '${field}' in request body`}
+                    })
+            })
+        })
+
+
+
+
     })
+
 
 
 }) //end describe 'Articles Endpoints'
