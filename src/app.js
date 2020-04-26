@@ -32,6 +32,14 @@ app.use(function errorHandler(error, req, res, next) {
 
 app.use('/articles', articlesRouter)
 
+/*
+//for demonstration of xss attack (17.16, p. 15-18)
+app.get('/xss', (req,res) => {
+  res.cookie('secretToken', '1234567890');
+  res.sendFile(__dirname + '/xss-example.html');
+})
+*/
+
 app.get('/', (req, res) => {
   res.send('Hello, world!')
 })

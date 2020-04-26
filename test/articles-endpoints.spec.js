@@ -3,7 +3,8 @@
 const {expect} = require('chai')
 const knex = require('knex')
 const app = require('../src/app')
-const { makeArticlesArray } = require('./articles.fixtures')
+const { makeArticlesArray, makeMaliciousArticle } = require('./articles.fixtures')
+const { maliciousArticle, expectedArticle } = makeMaliciousArticle()
 
 
 //Optional: you can add .only (describe.only) so we're only running this test file whilst working on it
@@ -48,6 +49,26 @@ describe('Articles Endpoints', function() {
                     .expect(200, testArticles) //with supertest, the 2nd arg to expect can be the res body that we expect
             })
         }) //end context 'Given there are articles in the database'
+        
+        context('Given it includes an XSS attack article', () => {
+            beforeEach('insert malicious article', () => {
+                return db
+                    .into('blogful_articles')
+                    .insert([maliciousArticle])
+            })
+
+            it('removes XSS attack content', () => {
+                return supertest(app)
+                    .get(`/articles/`)
+                    .expect(200)
+                    .expect(res => {
+                        expect(res.body[0].title).to.eql(expectedArticle.title);
+                        expect(res.body[0].content).to.eql(expectedArticle.content);
+                                
+                    })
+            })
+        })
+
     }) //end describe `GET /articles`    
 
     describe(`GET /articles/:article_id`, () => {
@@ -78,10 +99,28 @@ describe('Articles Endpoints', function() {
                     .expect(200, expectedArticle)
             })
         })//end context 'Given there are articles in the database'
+
+        context('Given an XSS attack article', () => {
+            beforeEach('insert malicious article', () => {
+                return db
+                    .into('blogful_articles')
+                    .insert([maliciousArticle])
+            })
+            it('removes XSS attack content', () => {
+                return supertest(app)
+                    .get(`/articles/${maliciousArticle.id}`)
+                    .expect(200)
+                    .expect(res => {
+                        expect(res.body.title).to.eql(expectedArticle.title);
+                        expect(res.body.content).to.eql(expectedArticle.content);
+                    })
+            })
+        })
+
     })//end describe `GET /articles/:article:id`
 
     //Optional: you can add .only (describe.only) so we're only running this test file whilst working on it
-    describe.only(`POST /articles`, () => {
+    describe(`POST /articles`, () => {
         it('creates an article, responding with 201 and the new article', function(){
             this.retries(3) //specifies how many times to attempt the test before counting it as failure
             const newArticle = {
@@ -131,9 +170,18 @@ describe('Articles Endpoints', function() {
                     })
             })
         })
-
-
-
+        
+        it('removes XSS attack content from response', () => {
+            return supertest(app)
+                .post('/articles')
+                .send(maliciousArticle)
+                .expect(201)
+                .expect(res => {
+                    expect(res.body.title).to.eql(expectedArticle.title)
+                    expect(res.body.content).to.eql(expectedArticle.content)
+                })
+        })
+        
 
     })
 
