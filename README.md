@@ -12,6 +12,7 @@ To migrate your test database, use the following command:
 <https://github.com/Thinkful-Ed/blogful-api/tree/post-article>  
 <https://github.com/Thinkful-Ed/blogful-api/tree/post-article-validation>  
 <https://github.com/Thinkful-Ed/blogful-api/tree/prevent-xss>  
-<>  
+<https://github.com/Thinkful-Ed/blogful-api/tree/delete-article>  
+  
 
 
