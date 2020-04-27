@@ -1,3 +1,4 @@
+const path = require('path') //one of Node's internal modules that supports a method called .join to calculate a valid path without any double slashes
 const express = require('express')
 const xss = require('xss') //tool that sanitizes strings of content
 
@@ -15,7 +16,8 @@ const serializeArticle = article => ({
 })
 
 articlesRouter
-    .route('/')
+    .route('/') // -------------------------------------------------------------// route('/')
+    //GET
     .get((req, res, next) => {
         ArticlesService.getAllArticles(
             req.app.get('db')
@@ -27,6 +29,7 @@ articlesRouter
             //get handled by our error handler middleware
             .catch(next)
     })  
+    //POST
     .post(jsonParser, (req, res, next) => {
         const { title, content, style } = req.body
         const newArticle = { title, content, style}
@@ -46,14 +49,15 @@ articlesRouter
         .then(article => {
             res
                 .status(201)
-                .location(`/articles/${article.id}`)
+                .location(path.posix.join(req.originalUrl `/${article.id}`)) //as windows paths are \ rather than /, we will use posix variant of the join method to create a web valid path
                 .json(serializeArticle(article))
         })
         .catch(next)
     })
 
 articlesRouter
-    .route('/:article_id')
+    .route('/:article_id') // -------------------------------------------------------------// route('/:article_id')
+    //ALL
     //the .all() handler triggers for all methods (GET, DELETE, etc.)
     .all((req,res,next) => {
         ArticlesService.getById(
@@ -71,6 +75,7 @@ articlesRouter
             })
             .catch(next)
     })
+    //GET
     .get((req, res, next) => {
         res.json({
             id: res.article.id,
@@ -80,6 +85,7 @@ articlesRouter
             date_published: res.article.date_published,
         })
     })
+    //DELETE
     .delete((req,res,next) => {
         ArticlesService.deleteArticle(
             req.app.get('db'),
@@ -90,6 +96,33 @@ articlesRouter
             })
             .catch(next)
     })
+    //PATCH
+    .patch(jsonParser, (req, res, next) => {
+       const { title, content, style } = req.body
+       const articleToUpdate = { title, content, style }
 
- module.exports = articlesRouter
+       const numberOfValues = Object.values(articleToUpdate).filter(Boolean).length
+       if (numberOfValues === 0) {
+         return res.status(400).json({
+           error: {
+             message: `Request body must contain either 'title', 'style' or 'content'`
+           }
+         })
+       }
+
+       ArticlesService.updateArticle(
+         req.app.get('db'),
+         req.params.article_id,
+         articleToUpdate
+       )
+         .then(numRowsAffected => {
+           res.status(204).end()
+         })
+         .catch(next)
+    })
+
+
+
+
+module.exports = articlesRouter
 

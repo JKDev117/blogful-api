@@ -30,7 +30,7 @@ app.use(function errorHandler(error, req, res, next) {
 })
 
 
-app.use('/articles', articlesRouter)
+app.use('/api/articles', articlesRouter)
 
 /*
 //for demonstration of xss attack (17.16, p. 15-18)
