@@ -49,7 +49,7 @@ articlesRouter
         .then(article => {
             res
                 .status(201)
-                .location(path.posix.join(req.originalUrl `/${article.id}`)) //as windows paths are \ rather than /, we will use posix variant of the join method to create a web valid path
+                .location(path.posix.join(req.originalUrl, `/${article.id}`)) //as windows paths are \ rather than /, we will use posix variant of the join method to create a web valid path
                 .json(serializeArticle(article))
         })
         .catch(next)
