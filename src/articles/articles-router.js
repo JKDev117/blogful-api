@@ -12,8 +12,10 @@ const serializeArticle = article => ({
     style: article.style,
     title: xss(article.title), //sanitize title
     content: xss(article.content), //sanitize content
-    date_published: article.date_published
+    date_published: article.date_published,
+    author: article.author,
 })
+
 
 articlesRouter
     .route('/') // -------------------------------------------------------------// route('/')
@@ -31,7 +33,7 @@ articlesRouter
     })  
     //POST
     .post(jsonParser, (req, res, next) => {
-        const { title, content, style } = req.body
+        const { title, content, style, author } = req.body
         const newArticle = { title, content, style}
         
         for(const [key, value] of Object.entries(newArticle)){
@@ -41,7 +43,7 @@ articlesRouter
                     .json({error: {message: `Missing '${key}' in request body`}})
             }
         }
- 
+        newArticle.author = author
         ArticlesService.insertArticle(
             req.app.get('db'),
             newArticle
@@ -49,7 +51,7 @@ articlesRouter
         .then(article => {
             res
                 .status(201)
-                .location(path.posix.join(req.originalUrl `/${article.id}`)) //as windows paths are \ rather than /, we will use posix variant of the join method to create a web valid path
+                .location(path.posix.join(req.originalUrl, `/${article.id}`)) //as windows paths are \ rather than /, we will use posix variant of the join method to create a web valid path
                 .json(serializeArticle(article))
         })
         .catch(next)
@@ -126,3 +128,16 @@ articlesRouter
 
 module.exports = articlesRouter
 
+
+
+/*
+Example body request for post
+
+{
+	"title": "Article Particle",
+    "content": "The article particle discovered by journalists",
+    "style": "Story"
+}
+
+
+*/

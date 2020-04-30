@@ -7,8 +7,11 @@ const helmet = require('helmet')
 const cors = require('cors')
 const { NODE_ENV } = require('./config')
 const articlesRouter = require('./articles/articles-router')
+const usersRouter = require('./users/users-router')
+const commentsRouter = require('./comments/comments-router')
 
 const app = express() //express instance
+
 
 const morganOption = (NODE_ENV === 'production')
   ? 'tiny'
@@ -31,6 +34,8 @@ app.use(function errorHandler(error, req, res, next) {
 
 
 app.use('/api/articles', articlesRouter)
+app.use('/api/users', usersRouter) //17.19
+app.use('/api/comments', commentsRouter) //17.19
 
 /*
 //for demonstration of xss attack (17.16, p. 15-18)
