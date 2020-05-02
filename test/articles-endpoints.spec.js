@@ -45,7 +45,7 @@ describe('Articles Endpoints', function() {
             const testUsers = makeUsersArray()
             const testArticles = makeArticlesArray()
 
-            beforeEach('insert articles', () => {
+            beforeEach('insert users before articles', () => {
                 return db
                     .into('blogful_users')
                     .insert(testUsers)
@@ -106,7 +106,7 @@ describe('Articles Endpoints', function() {
             const testUsers = makeUsersArray()
             const testArticles = makeArticlesArray()
 
-            beforeEach('insert articles', () => {
+            beforeEach('insert users before articles', () => {
                 return db
                     .into('blogful_users')
                     .insert(testUsers)
@@ -157,7 +157,7 @@ describe('Articles Endpoints', function() {
     describe(`POST /api/articles`, () => {
         const testUsers = makeUsersArray()
         
-        beforeEach('insert malicious article', () => {
+        beforeEach('insert users', () => {
             return db
                 .into('blogful_users')
                 .insert(testUsers)
@@ -243,7 +243,7 @@ describe('Articles Endpoints', function() {
             const testUsers = makeUsersArray()
             const testArticles = makeArticlesArray()
 
-            beforeEach('insert articles', () => {
+            beforeEach('insert users before articles', () => {
                 return db
                     .into('blogful_users')
                     .insert(testUsers)
@@ -284,7 +284,7 @@ describe('Articles Endpoints', function() {
             const testUsers = makeUsersArray()
             const testArticles = makeArticlesArray()
       
-            beforeEach('insert articles', () => {
+            beforeEach('insert users before articles', () => {
                 return db
                     .into('blogful_users')
                     .insert(testUsers)
